@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pull Request</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -64,23 +65,10 @@
             background-color: #2196f3;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
-        .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 5px;
-            font-size: 14px;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        button:hover .tooltip {
-            display: block;
-            opacity: 1;
+        #result {
+            margin-top: 20px;
+            font-size: 22px;
+            color: white;
         }
     </style>
 </head>
@@ -89,41 +77,32 @@
         <h2>Enter Your Pull Request Message</h2>
         <textarea id="pullMessage" placeholder="Enter pull request message here..."></textarea>
         <br>
-        <button onclick="submitPullRequest()">
+        <button onclick="analyzeMessage()">
             Submit Pull Request
         </button>
+        <p id="result"></p>
     </div>
-
     <script>
-        function submitPullRequest() {
-            const pullMessage = document.getElementById('pullMessage').value;
-
-            if (pullMessage.trim() === "") {
-                alert("Please enter a PR message.");
+        function analyzeMessage() {
+            let message = $("#pullMessage").val().trim();
+            if (message === "") {
+                alert("Please enter a message.");
                 return;
             }
-
-            // Make a POST request to the Flask backend
-            fetch('/process_message', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+            $.ajax({
+                url: "/process_message",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ message: message }),
+                success: function(response) {
+                    // Display the predicted impact category instead of priority
+                    $("#result").text("Predicted Impact: " + response.impact_category);
                 },
-                body: JSON.stringify({ message: pullMessage })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    alert("Pull Request: " + data.message + "\nPriority: " + data.priority);
+                error: function(xhr) {
+                    alert("Error: " + xhr.responseJSON.error);
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('There was an error submitting the PR message.');
             });
         }
-    </script>
+    </script>    
 </body>
 </html>
