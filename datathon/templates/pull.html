@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pull Request</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Helvetica', sans-serif;
+            background-color: #1c1c1c;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: #2a2a2a;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            width: 80%;
+            max-width: 480px;
+        }
+        h2 {
+            font-size: 2.2rem;
+            color: #f5f5f5;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        textarea {
+            width: 90%;
+            max-width: 600px;
+            padding: 15px;
+            font-size: 20px;
+            margin-bottom: 30px;
+            height: 200px;
+            resize: vertical;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: white;
+        }
+        button {
+            padding: 18px 30px;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            background-color: #03a9f4;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 50%;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #2196f3;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        button:hover .tooltip {
+            display: block;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Your Pull Request Message</h2>
+        <textarea id="pullMessage" placeholder="Enter pull request message here..."></textarea>
+        <br>
+        <button onclick="submitPullRequest()">
+            Submit Pull Request
+        </button>
+    </div>
+
+    <script>
+        function submitPullRequest() {
+            const pullMessage = document.getElementById('pullMessage').value;
+
+            if (pullMessage.trim() === "") {
+                alert("Please enter a PR message.");
+                return;
+            }
+
+            // Make a POST request to the Flask backend
+            fetch('/process_message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: pullMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("Pull Request: " + data.message + "\nPriority: " + data.priority);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error submitting the PR message.');
+            });
+        }
+    </script>
+</body>
+</html>
