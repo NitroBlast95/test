@@ -8,15 +8,15 @@ PRIORITY_LEVELS = ["Low", "Medium Low", "Medium High", "High"]
 
 @app.route('/')
 def index():
-    return render_template('datathon.html')  # Load datathon.html for the root page
+    return render_template('datathon/templates/datathon.html')  # Load datathon.html for the root page
 
 @app.route('/commit')
 def commit():
-    return render_template('commit.html')  # Load commit.html when visiting /commit route
+    return render_template('datathon/templates/commit.html')  # Load commit.html when visiting /commit route
 
 @app.route('/pull')
 def pull():
-    return render_template('pull.html')  # Load pull.html when visiting /pull route
+    return render_template('datathon/templates/pull.html')  # Load pull.html when visiting /pull route
 
 @app.route('/process_message', methods=['POST'])
 def process_message():
