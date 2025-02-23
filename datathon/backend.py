@@ -8,7 +8,7 @@ PRIORITY_LEVELS = ["Low", "Medium Low", "Medium High", "High"]
 
 @app.route('/')
 def index():
-    return render_template('datathon.html')  # Load datathon.html for the root page
+    return render_template('index.html')  # Load datathon.html for the root page
 
 @app.route('/commit')
 def commit():
